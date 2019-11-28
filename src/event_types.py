@@ -1,4 +1,4 @@
-event_types = [
+EVENT_TYPES = [
 
     ##### MISSION EVENTS #####
 
