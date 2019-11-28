@@ -6,10 +6,8 @@ import numpy as np
 filename = "1216 - Space Marines 5.tdf"
 filepath = "./data/"
 
-raw_data = functions.read_data_file(filename, filepath)
-
-cleaned_data = functions.remove_spacing(raw_data)
-lined = functions.get_lines(cleaned_data)
+data = functions.read_data_file(filename, filepath)
+lined = functions.get_lines(data)
 lined = list(filter(None, lined))
 # print(lined)
 
@@ -27,12 +25,10 @@ for line in lined:
 headers_only.sort()
 # data_only.sort()
 
-# print(headers_only)
-# print(data_only)
-[print(header) for header in headers_only]
-[print(data) for data in data_only]
+# [print(header, '\n') for header in headers_only]
+# [print(data, '\n') for data in data_only]
 
-df = pd.DataFrame(headers_only)
+# df = pd.DataFrame(headers_only)
 
 frames = []
 frame_labels = []
@@ -44,28 +40,31 @@ for header in headers_only:
     header_index = header[0][1]
     label = header[0][3:]
     columns = header[1:]
-    lines = list(filter(lambda l: l[0][0] == header_index, data_only))
-    print("{} {}: {} lines \n {}".format(
-        header_index, label, len(lines), columns))
+    rows = list(filter(lambda l: l[0][0] == header_index, data_only))
+    # print("section {} {}: [{}] {}".format(
+    # header_index, label, len(rows), columns))
 
     if label == "event":
-        data = [functions.collapse_event_line(line) for line in lines]
+        data = [functions.collapse_event_line(row) for row in rows]
     else:
-        data = [line[1:] for line in lines]
+        data = [row[1:] for row in rows]
 
-    print(data)
+    # print(data)
 
     df = pd.DataFrame(
         data=data,
         # index=[label, ],
         columns=columns,
     )
+    # print(df.iloc[0])
 
     frames.append(df)
     frame_labels.append(label)
 
-for i in range(0, len(frames)):
-    print("\n", frame_labels[i])
-    print(frames[i])
+print("%s sections: " % len(frames))
 
-sections = functions.get_data_sections(raw_data)
+for i in range(0, len(frames)):
+    pass
+    print(" %i: %s -- %s" % (i, frame_labels[i], frames[i].shape))
+
+# sections = functions.get_data_sections(data)
