@@ -77,6 +77,7 @@ def read_and_return_sections(filename, filepath):
     for i in range(0, len(frames)):
         pass
         print(" %i: %s -- %s" % (i, frame_labels[i], frames[i].shape))
+        print("  ", list(frames[i].columns))
 
     return (frames, frame_labels)
     # sections = functions.get_data_sections(data)
