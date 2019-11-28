@@ -24,11 +24,17 @@ def get_line_parts(line):
 
 
 def collapse_event_line(event_line):
-    subtype = get_event_subtype(event_line)
+    # subtype = get_event_subtype(event_line)
     time = event_line[1]
     type = event_line[2]
     varies = ' '.join(event_line[3:])
-    return [time, type, varies]
+    time_str = millis_to_msr(time, 'human')
+
+    initiator = event_line[3] if len(event_line) > 3 else ''
+    activity = event_line[4] if len(event_line) > 4 else ''
+    target = event_line[5] if len(event_line) > 5 else ''
+
+    return [time, type, varies, initiator, activity, target, time_str]
 
 
 def get_event_subtype(event_line):
@@ -67,3 +73,25 @@ def get_headers(raw_data):
 
 def get_data(raw_data):
     pass
+
+
+"""
+Helper function to convert a raw milliseconds integer to 
+minutes, seconds, and remaining millis
+"""
+
+
+def millis_to_msr(millis, format='raw'):
+    millis = int(millis)
+    seconds = (millis/1000) % 60
+    seconds = int(seconds)
+    minutes = (millis/(1000*60)) % 60
+    minutes = int(minutes)
+
+    if format == 'raw':
+        return (minutes, seconds, millis % 1000)
+    elif format == 'human':
+        return f"{minutes:02d}:{seconds:02d}"
+        # return f"{minutes:02d}:{seconds:02d}:{millis%1000:04d}"
+    else:
+        return (minutes, seconds, millis % 1000)

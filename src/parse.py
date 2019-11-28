@@ -50,7 +50,7 @@ def read_and_return_sections(filename, filepath):
         columns = []
         data = []
         if label == "event":
-            columns = header[1:]
+            columns = [*header[1:], 'initiator', 'activity', 'target', 'time_str']
             data = [functions.collapse_event_line(row) for row in rows]
         elif label == "entity-start":
             columns = [*header[1:], 'position']
