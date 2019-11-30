@@ -1,5 +1,10 @@
+# module imports
 import re
 import os
+import json
+
+# file imports
+import constants
 
 
 def read_data_file(name, path):
@@ -10,6 +15,12 @@ def read_data_file(name, path):
 
     print("Read data from file '{}', got {} bytes".format(name, len(raw)))
     return raw
+
+
+def write_parsed_file(filename, parsed_data: object):
+    write_path = os.path.join(constants.PARSED_DATA_PATH, filename)
+    json.dump(parsed_data, write_path)
+    return True
 
 
 def get_lines(text):
@@ -59,12 +70,6 @@ def get_line_type(line):
         return "header"
     else:
         return "data"
-
-
-def get_data_sections(raw_data):
-    matches = re.findall(r"^;\d+\/", raw_data)
-    # print(matches)
-    return matches
 
 
 def get_headers(raw_data):
