@@ -1,10 +1,9 @@
-import functions
+# module imports
 import pandas as pd
-import numpy as np
-import position_types
 
-filename = "1216 - Space Marines 5.tdf"
-filepath = "./data/"
+# file imports
+import position_types
+import functions
 
 pd.set_option('display.max_rows', 100)
 
@@ -50,7 +49,8 @@ def read_and_return_sections(filename, filepath):
         columns = []
         data = []
         if label == "event":
-            columns = [*header[1:], 'initiator', 'activity', 'target', 'time_str']
+            columns = [*header[1:], 'initiator',
+                       'activity', 'target', 'time_str']
             data = [functions.collapse_event_line(row) for row in rows]
         elif label == "entity-start":
             columns = [*header[1:], 'position']
@@ -80,4 +80,3 @@ def read_and_return_sections(filename, filepath):
         print("  ", list(frames[i].columns))
 
     return (frames, frame_labels)
-    # sections = functions.get_data_sections(data)

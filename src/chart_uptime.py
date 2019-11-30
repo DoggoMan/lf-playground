@@ -1,15 +1,13 @@
-# file imports
-import functions
-import parse
-import event_types
-
 # module imports
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 
-base_filename = " - Space Marines 5.tdf"
-base_filepath = "./data/raw/"
+# file imports
+import constants
+import event_types
+import functions
+import parse_rawfile
 
 # use these two variables to target games with specific dates and game IDs
 this_filename = 2004
@@ -18,18 +16,13 @@ this_filepath = 20191125
 # easy constant for manipulating number of plots returned
 max_graphs = 5
 
-# filename = "1216 - Space Marines 5.tdf"
-# filepath = "./data/test/"
-# filename = "2004 - Space Marines 5.tdf"
-# filepath = "./data/raw/20191125"
-
 # concat the template and specific variables together
-filename = "%s%s" % (this_filename, base_filename)
-filepath = "%s%s" % (base_filepath, this_filepath)
+filename = "%s%s" % (this_filename, constants.base_filename)
+filepath = "%s%s" % (constants.RAW_DATA_PATH, this_filepath)
 
 pd.set_option('display.max_rows', 50)
 
-(data, labels) = parse.read_and_return_sections(filename, filepath)
+(data, labels) = parse_rawfile.read_and_return_sections(filename, filepath)
 print(labels)
 
 print(data[2])
