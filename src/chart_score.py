@@ -49,12 +49,18 @@ for index, row in players.iterrows():
     player_team = data[1][data[1]['index'] == row['team']]['desc']
     player_team_str = player_team.tolist()[0].split(' ')[0]
 
+    player_end_state = data[6][data[6]['id'].str.contains(row['id'])]
+    player_survived = True if int(player_end_state['livesLeft'].tolist()[
+        0]) > 0 else False
+
     # retrieve all events relating to this player
     events = data[3][data[3]['varies'].str.contains(row['id'])]
     score_events = data[4][data[4]['entity'].str.contains(row['id'])]
     score_events = score_events.sort_values('time')
 
     print("%s score events for player %s" % (len(score_events), player_name))
+    print("player %s %s" %
+          (player_name, 'Survived' if player_survived else 'Died'))
 
     # vibrancy_list = ['f', 'e', 'd', 'c', 'b', 'a']
     vibrancy_list = ['', 'ff0000', 'ee0000', 'dd2200', 'aa0000', '990000']
@@ -72,10 +78,18 @@ for index, row in players.iterrows():
     # y_smoothed = gaussian_filter1d(y, sigma=2)
     y_smoothed = y
 
-    # last_score = (x[-1], y[-1])
+    # last_score = np.array([x[-1]])
+    death = [len(x)-1] if not player_survived else []
+    marker = 'x' if not player_survived else 'o'
 
-    ax.plot(x, y_smoothed, color=color, linestyle=linestyle, label="%s - %s %s" %
-            (player_name, player_team_str, row['position']))
+    ax.plot(x, y_smoothed,
+            color=color,
+            linestyle=linestyle,
+            marker=marker,
+            markevery=death,
+            label="%s - %s %s" %
+            (player_name, player_team_str, row['position'])
+            )
 
 print('Rendering graphs...')
 
