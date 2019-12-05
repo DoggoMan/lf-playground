@@ -45,10 +45,11 @@ ax = fig.add_subplot(111)
 for index, row in players.iterrows():
     # if index > 5:
         # continue
-    player_name = row['desc']
+    player_name = row['desc'].replace('_', '')
     player_team = data[1][data[1]['index'] == row['team']]['desc']
     player_team_str = player_team.tolist()[0].split(' ')[0]
 
+    player_entity_end = data[5][data[5]['id'].str.contains(row['id'])]
     player_end_state = data[6][data[6]['id'].str.contains(row['id'])]
     player_survived = True if int(player_end_state['livesLeft'].tolist()[
         0]) > 0 else False
@@ -58,18 +59,21 @@ for index, row in players.iterrows():
     score_events = data[4][data[4]['entity'].str.contains(row['id'])]
     score_events = score_events.sort_values('time')
 
+    # deac_events = events[events['target'].str.contains(
+    # row['id']) & events['type'].isin(["0206", "0306"])]
+
     print("%s score events for player %s" % (len(score_events), player_name))
     print("player %s %s" %
           (player_name, 'Survived' if player_survived else 'Died'))
 
     # vibrancy_list = ['f', 'e', 'd', 'c', 'b', 'a']
-    vibrancy_list = ['', 'ff0000', 'ee0000', 'dd2200', 'aa0000', '990000']
-    linestyle_list = ['-', '-.', '--', ':']
+    vibrancy_list = ['', 'ff0000', 'ee0000', 'dd8800', 'dd8800', '880000']
+    linestyle_list = ['', '-', '-', '--', '--', ':']
 
     pos_index = int(position_types.POSITION_TYPES_REVERSE[row['position']])
-    color = '#' + vibrancy_list[pos_index] if player_team_str == 'Ice' else '#' + \
+    color = '#' + vibrancy_list[pos_index] if player_team_str == 'Fire' else '#' + \
         vibrancy_list[pos_index][::-1]
-    linestyle = linestyle_list[int(pos_index / 2)]
+    linestyle = linestyle_list[int(pos_index)]
 
     # print(color, pos_index)
 
@@ -78,9 +82,11 @@ for index, row in players.iterrows():
     # y_smoothed = gaussian_filter1d(y, sigma=2)
     y_smoothed = y
 
-    # last_score = np.array([x[-1]])
+    # death = int(player_entity_end['time'].tolist()[
+    # 0]) if not player_survived else []
     death = [len(x)-1] if not player_survived else []
     marker = 'x' if not player_survived else 'o'
+    # print(death)
 
     ax.plot(x, y_smoothed,
             color=color,
