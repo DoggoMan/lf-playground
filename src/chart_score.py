@@ -29,8 +29,6 @@ players = data[2][data[2]['type'].str.contains(
 
 print(players)
 
-# players = [(index, row) for index, row in data[2].iterrows() if row['position']
-#            != 'Referee' and row['position'] != 'Field']
 print("~ identified %s players from %s entity-start's" %
       (len(players), len(data[2])))
 
@@ -78,21 +76,30 @@ for index, row in players.iterrows():
     # print(color, pos_index)
 
     x = [0, *[int(xi) for xi in score_events['time']]]
-    y = [8, *[int(xi) for xi in score_events['new']]]
-    # y_smoothed = gaussian_filter1d(y, sigma=2)
-    y_smoothed = y
+    y = [0, *[int(xi) for xi in score_events['new']]]
+    # y = gaussian_filter1d(y, sigma=2)
 
-    # death = int(player_entity_end['time'].tolist()[
-    # 0]) if not player_survived else []
-    death = [len(x)-1] if not player_survived else []
-    marker = 'x' if not player_survived else 'o'
-    # print(death)
+    end = int(player_entity_end['time'].tolist()[0])
+    # print(end)
 
-    ax.plot(x, y_smoothed,
+    # no marker for players that survived
+    marker = 'x' if not player_survived else None
+
+    # extend dataset by adding a pre-diff datapoint to each score event
+    # x = [*x, *[xi-1 for xi in x]]
+    # y = [*y, *[yi-1 for yi in y]]
+
+    # when the player is nuked out, there will be no score delta for that deac
+    # therefore we need to add their end time as a final datapoint, with the last score.
+    x = [*x, end]
+    y = [*y, y[-1]]
+
+    ax.plot(x, y,
             color=color,
             linestyle=linestyle,
             marker=marker,
-            markevery=death,
+            # mark just the final item
+            markevery=[len(x)-1],
             label="%s - %s %s" %
             (player_name, player_team_str, row['position'])
             )
