@@ -15,25 +15,25 @@ import position_types
 ####     TODOS      ####
 # :)
 
-anti_smoothing = True
 
-
-def chart_score(filename, filepath):
-    # concat the template and specific variables together
-    raw_fn = "%s%s" % (filename, constants.base_filename)
-    raw_fp = "%s%s" % (constants.RAW_DATA_PATH, filepath)
+def chart_score(filename, filepath, show_plot=False, save_file=False, anti_smoothing=True, verbose=False):
+    def vprint(*args):
+        if verbose:
+            print(*args)
+        else:
+            pass
 
     pd.set_option('display.max_rows', 50)
 
-    (data, labels) = parse_rawfile.read_and_return_sections(raw_fn, raw_fp)
+    (data, labels) = parse_rawfile.read_and_return_sections(filename, filepath, verbose)
 
     players = data[2][data[2]['type'].str.contains(
         'player')].sort_values(['team', 'category'])
 
-    print(players)
+    vprint(players)
 
-    print("~ identified %s players from %s entity-start's" %
-          (len(players), len(data[2])))
+    vprint("~ identified %s players from %s entity-start's" %
+           (len(players), len(data[2])))
 
     fig = plt.figure(figsize=(14, 10), dpi=80, facecolor='w', edgecolor='k')
     ax = fig.add_subplot(111)
@@ -46,7 +46,7 @@ def chart_score(filename, filepath):
     final_scores = data[5].astype({'score': 'int32'}).sort_values(
         'score', ascending=False)['score']
     highest_score = final_scores.head(1).values[0]
-    print('High scores:', highest_score, final_scores)
+    vprint('High scores:', highest_score, final_scores)
 
     maxy = 10000 if int(highest_score) < 10000 else (
         int(highest_score/1000)+1) * 1000
@@ -67,10 +67,10 @@ def chart_score(filename, filepath):
         score_events = data[4][data[4]['entity'].str.contains(row['id'])]
         score_events = score_events.sort_values('time')
 
-        print("%s score events for player %s" %
-              (len(score_events), player_name))
-        print("player %s %s" %
-              (player_name, 'Survived' if player_survived else 'Died'))
+        vprint("%s score events for player %s" %
+               (len(score_events), player_name))
+        vprint("player %s %s" %
+               (player_name, 'Survived' if player_survived else 'Died'))
 
         # vibrancy_list = ['f', 'e', 'd', 'c', 'b', 'a']
         vibrancy_list = ['', 'ff0000', 'ee0000', 'dd8800', 'dd8800', '880000']
@@ -81,14 +81,14 @@ def chart_score(filename, filepath):
             vibrancy_list[pos_index][::-1]
         linestyle = linestyle_list[int(pos_index)]
 
-        # print(color, pos_index)
+        # vprint(color, pos_index)
 
         x = [0, *[int(xi) for xi in score_events['time']]]
         y = [0, *[int(xi) for xi in score_events['new']]]
         # y = gaussian_filter1d(y, sigma=2)
 
         end = int(player_entity_end['time'].tolist()[0])
-        # print(end)
+        # vprint(end)
 
         # no marker for players that survived
         marker = 'x' if not player_survived else None
@@ -114,8 +114,6 @@ def chart_score(filename, filepath):
                 (player_name, player_team_str, row['position'])
                 )
 
-    print('Rendering graph for game %s' % filename)
-
     ax.legend(loc='upper left')
     ax.set(xlim=(0, maxx), ylim=(-1000, maxy))
     ax.grid()
@@ -125,29 +123,23 @@ def chart_score(filename, filepath):
                         for xval in xticks])
     plt.yticks(yticks)
 
-    plt.savefig(os.path.join(constants.OUTPUTS_DATA_PATH, '%s_%s.png' %
-                             (filepath, filename)))
-    # plt.show()
+    if save_file:
+        print(data[0])
+        game_data = data[0]['start'].to_numpy()[0]
+        game_date = game_data[0:8]
+        game_number = game_data[8:12]
+
+        new_file_name = '%s_%s.png' % (game_date, game_number)
+        print('Saving graph for game %s' % new_file_name)
+        plt.savefig(os.path.join(constants.OUTPUTS_DATA_PATH, new_file_name))
+        
+    if show_plot:
+        print('Rendering graph for game %s' % new_file_name)
+        plt.show()
 
 
 # use these two variables to target games with specific dates and game IDs
 this_filename = 1942
 this_filepath = 20191202
 
-process_bulk = True
-
-if process_bulk:
-    filenames = [1901,
-                 1942,
-                 2005,
-                 2047,
-                 1921,
-                 1945,
-                 2027,
-                 2108]
-
-    for fn in filenames:
-        chart_score(fn, this_filepath)
-
-else:
-    chart_score(this_filename, this_filepath)
+# chart_score(this_filename, "%s%s" % (constants.RAW_DATA_PATH, this_filepath), show_plot=True)

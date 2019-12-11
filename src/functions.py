@@ -6,6 +6,11 @@ import json
 # file imports
 import constants
 
+def make_full_file_path(path):
+    return "%s%s" % (constants.RAW_DATA_PATH, path)
+
+def make_full_file_name(name):
+    return "%s%s" % (name, constants.base_filename)
 
 def read_data_file(name, path):
     f = open(os.path.join(path, name),

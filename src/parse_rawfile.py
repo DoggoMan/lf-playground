@@ -8,7 +8,13 @@ import functions
 pd.set_option('display.max_rows', 100)
 
 
-def read_and_return_sections(filename, filepath):
+def read_and_return_sections(filename, filepath, verbose=False):
+    def vprint(*args):
+        if verbose:
+            print(*args)
+        else:
+            pass
+
     data = functions.read_data_file(filename, filepath)
     lined = functions.get_lines(data)
     lined = list(filter(None, lined))
@@ -36,8 +42,8 @@ def read_and_return_sections(filename, filepath):
     frames = []
     frame_labels = []
 
-    print("headers: ", len(headers_only))
-    print("data: ", len(data_only))
+    vprint("headers: ", len(headers_only))
+    vprint("data: ", len(data_only))
 
     for header in headers_only:
         header_index = header[0][1]
@@ -72,11 +78,11 @@ def read_and_return_sections(filename, filepath):
         frames.append(df)
         frame_labels.append(label)
 
-    print("%s sections: " % len(frames))
+    vprint("%s sections: " % len(frames))
 
     for i in range(0, len(frames)):
         pass
-        print(" %i: %s -- %s" % (i, frame_labels[i], frames[i].shape))
-        print("  ", list(frames[i].columns))
+        vprint(" %i: %s -- %s" % (i, frame_labels[i], frames[i].shape))
+        vprint("  ", list(frames[i].columns))
 
     return (frames, frame_labels)
