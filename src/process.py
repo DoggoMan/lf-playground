@@ -7,8 +7,8 @@ import chart_score
 
 process_bulk = True
 
-filepath = ""
-# filepath = "20191118"
+# filepath = ""
+filepath = "20191118"
 # filepath = "20191125"
 # filepath = "20191202"
 
@@ -22,4 +22,5 @@ if process_bulk:
     print(files)
 
     for fn in files:
-        chart_score.chart_score(fn, functions.make_full_file_path(filepath), save_file=True, show_plot=False)
+        pass
+        # chart_score.chart_score(fn, functions.make_full_file_path(filepath), save_file=True, show_plot=False)
