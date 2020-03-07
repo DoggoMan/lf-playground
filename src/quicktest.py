@@ -1,6 +1,5 @@
 import api
 
-
 query = """
 query getAliases {
   games(
@@ -17,9 +16,14 @@ query getAliases {
 }
 """
 
+print("Fetching data for query: ", query)
 data = api.fetchData(query)
 
-print(data)
+if data is not None:
+    print("Got Data!")
+    print(data)
+else:
+    print("No data returned for query!")
 
 
 """

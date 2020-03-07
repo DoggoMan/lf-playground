@@ -213,8 +213,8 @@ def main():
     yearless = str(year - 1) + center
     yearmore = str(year + 1) + center
     printHeader("Trend %s > %s" % (yearless, yearmore))
-    dataless = sample_queries["getScoreAggs"] % (json.dumps(
-        players), json.dumps("2020-01-01"), json.dumps(future))
+    # dataless = sample_queries["getScoreAggs"] % (json.dumps(
+    #     players), json.dumps("2020-01-01"), json.dumps(future))
 
     """
 
